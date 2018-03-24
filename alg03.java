@@ -9,7 +9,6 @@ public class alg03 {
 
 	public static void main(String[] args) {
 		new alg03();
-		new NoBreak();
 	}
 
 	alg03() {

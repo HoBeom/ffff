@@ -2,14 +2,14 @@ package alg04;
 
 public class MergeSort {
 	int[] temp;
-
-	MergeSort(){}
-	MergeSort(int[] array) {
-		temp = new int[array.length];
-		mergeSort(array, 0, array.length - 1);
+	
+	MergeSort() {
 	}
 
-	public void mergeSort(int[] array) {
+	MergeSort(int[] array) {
+		//합병하면서 배열을 계속 할당받는것보다 처음 호출시 배열을 생성하여 사용 
+		//생성시 함수들이 메모리에 올라가는 시간도 소팅시간에 포함.
+		//무엇이 최적화인지 테스트 해볼것!!
 		temp = new int[array.length];
 		mergeSort(array, 0, array.length - 1);
 	}

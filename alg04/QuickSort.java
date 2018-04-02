@@ -1,19 +1,20 @@
 package alg04;
 
 public class QuickSort {
-	int i;
-	
-	QuickSort(){}
-	QuickSort(int[] array) {
+
+	public void quickSort(int[] array) {
 		quickSort(array, 0, array.length - 1);
 	}
 
-	public void quickSort(int[] array) {
-		quickSort(array, 0, array.length);
+	public void midquickSort(int[] array) {
+		midquickSort(array, 0, array.length - 1);
 	}
 
-	public void quickSort(int[] array, int begin, int end) {
-		System.out.println(++i + "step " + begin + "," + end);
+	public void ranquickSort(int[] array) {
+		ranquickSort(array, 0, array.length - 1);
+	}
+
+	private void quickSort(int[] array, int begin, int end) {
 		if (begin < end) {
 			int p;
 			p = partition(array, begin, end);
@@ -22,53 +23,92 @@ public class QuickSort {
 		}
 	}
 
-	public int partition(int[] array, int begin, int end) {
-		int pivot, temp, Left, Right, t;
-		System.out.println("partition " + begin + " to " + end);
-		Left = begin - 1;
-		Right = begin;
-		pivot = end;
-		t = array[pivot];
-		while (Right < pivot) {
-			if (array[Right] <= t) {
-				temp = array[++Left];
-				array[Right] = array[Left];
-				array[Left] = temp;
-				System.out.println("swap"+Right+","+Left);
-			}
-			Right++;
+	private void ranquickSort(int[] array, int begin, int end) {
+		if (begin < end) {
+			int p;
+			p = ranpartition(array, begin, end);
+			quickSort(array, begin, p - 1);
+			quickSort(array, p + 1, end);
 		}
-		Left++;
-		temp = array[Left];
-		array[Right] = array[Left];
-		array[Left] = temp;
-		return Left;
-
 	}
 
-	public int ranpartition(int[] array, int begin, int end) {
-		int pivot, temp, Left, Right, t;
-		Left = begin;
-		Right = end;
-		pivot = (begin + end) / 2;
-		while (Left < Right) {
-			while ((array[Left] <= array[pivot]) && (Left <= Right))
+	private void midquickSort(int[] array, int begin, int end) {
+		if (begin < end) {
+			int p;
+			p = midpartition(array, begin, end);
+			quickSort(array, begin, p - 1);
+			quickSort(array, p + 1, end);
+		}
+	}
+
+	private int partition(int[] array, int begin, int end) {
+		int Left = begin - 1;
+		int pivot = array[end];
+		int temp;
+		for (int Right = begin; Right < end; Right++) {
+			if (array[Right] < pivot) {
 				Left++;
-			while ((array[Right] > array[pivot]) && (Left <= Right))
-				Right--;
-			if (Left <= Right) {
 				temp = array[Left];
 				array[Left] = array[Right];
 				array[Right] = temp;
 			}
-			if (Right == pivot) {
-				return Left;
-			}
 		}
-		temp = array[pivot];
-		array[pivot] = array[Right];
-		array[Right] = temp;
-		return Right;
+		Left++;
+		array[end] = array[Left];
+		array[Left] = pivot;
+		return Left;
 	}
 
+	private int ranpartition(int[] array, int begin, int end) {
+		//랜덤으로 인덱스를 골라 end 인덱스와 치환
+		int ran = begin + (int) (Math.random() * (end - begin));
+		int pivot = array[ran];
+		array[ran] = array[end];
+		int Left = begin - 1;
+		int temp;
+		for (int Right = begin; Right < end; Right++) {
+			if (array[Right] < pivot) {
+				Left++;
+				temp = array[Left];
+				array[Left] = array[Right];
+				array[Right] = temp;
+			}
+		}
+		Left++;
+		array[end] = array[Left];
+		array[Left] = pivot;
+		return Left;
+	}
+
+	private int midpartition(int[] array, int begin, int end) {
+		// x,y,z 의 대소를 비교하여 중간값을 end로 보낸다.
+		int mid = (begin + end) / 2;
+		int x = array[begin];
+		int y = array[end];
+		int z = array[mid];
+		int temp;
+		if ((y > x && x > z) || (z > x && x > y)) {
+			// begin = 중간값.
+			array[end] = x;
+			array[begin] = y;
+		} else if ((x > z && z > y) || (y > z && z > y)) {
+			// mid = 중간값.
+			array[end] = z;
+			array[mid] = y;
+		} // else 는 end가 중간값이므로 swap할 필요가 없다.
+		int pivot = array[end];
+		int Left = begin - 1;
+		for (int Right = begin; Right < end; Right++) {
+			if (array[Right] < pivot) {
+				Left++;
+				temp = array[Left];
+				array[Left] = array[Right];
+				array[Right] = temp;
+			}
+		}
+		Left++;
+		array[end] = array[Left];
+		array[Left] = pivot;
+		return Left;
+	}
 }

@@ -161,7 +161,7 @@ public class alabamaMap {
 			double dist = calDistance(x.lat, x.lon, y.lat, y.lon);
 			edges.add(new Edge(xi, yi, dist));
 		} else
-			System.out.println("ADDROAD ERROR\t" + line[0] + "\tto\t" + "" + line[1]);
+			System.out.println("ADDEDGE ERROR\t" + line[0] + "\tto\t" + "" + line[1]);
 	}
 
 	private double calDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -187,17 +187,17 @@ public class alabamaMap {
 	}
 
 	private void readcity() throws IOException {
-		citys = new ArrayList<City>();// ÀúÀå°ø°£
-		// ÆÄÀÏÀĞ±â
+		citys = new ArrayList<City>();// ì €ì¥ê³µê°„
+		// íŒŒì¼ì½ê¸°
 		for (String line : Files.readAllLines(Paths.get("./alabama.txt")))
 			citys.add(new City(line.split("\t")));
 		/*
-		 * // Á¤·Ä citys.sort(new Comparator<city>() {
+		 * // ì •ë ¬ citys.sort(new Comparator<city>() {
 		 * 
 		 * @Override public int compare(city c1, city c2) { return
 		 * c1.name.compareTo(c2.name); } });
 		 */
-		// µµ½ÃÃâ·Â
+		// ë„ì‹œì¶œë ¥
 		//for (City city : citys)
 			//System.out.println(city);
 	}
@@ -297,7 +297,7 @@ class City {
 
 	@Override
 	public boolean equals(Object obj) {
-		City c = (City) obj; // ¿©±â¼­ °­Á¦ Å¸ÀÔÄ³½ºÆÃÀ¸·Î city class¿ÜÀÇ °´Ã¼°¡ µé¾î¿À¸é ¿À·ù°¡ ³¯¼öµµ?
+		City c = (City) obj; // ì—¬ê¸°ì„œ ê°•ì œ íƒ€ì…ìºìŠ¤íŒ…ìœ¼ë¡œ city classì™¸ì˜ ê°ì²´ê°€ ë“¤ì–´ì˜¤ë©´ ì˜¤ë¥˜ê°€ ë‚ ìˆ˜ë„?
 		return this.name.equals(c.name);
 	}
 }

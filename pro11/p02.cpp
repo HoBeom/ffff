@@ -28,7 +28,7 @@ int check(double array[MAX][MAX], double b[MAX], int n) {
 		div = array[i][i];
 		// div == 0 일때  열 swap 필요!! 
 		if (div == 0) {
-			for (int j = 0; j < n; j++) {
+			for (int j = 0; j <= n; j++) {
 				//행이 모두 0 이라면 해가 0이면 infinite 해가 0이아니면 No
 				if (j == n) {
 					if(b[i]==0)
@@ -41,12 +41,26 @@ int check(double array[MAX][MAX], double b[MAX], int n) {
 				if (array[i][j] != 0)
 					break;
 			}
-			//swap, i가 n-1일수 없다. 따라서 i행과 i+1행을 스왑한다.
-			for (int j = 0; j < n; j++) {
-				int temp = array[i + 1][j];
-				array[i + 1][j] = array[i][j];
-				array[i][j] = temp;
+			//swap
+			printf("swap\n");
+			int k = i + 1;
+			double temp;
+			while (array[i][i] == 0 && k <= n) {
+				if (k == n) {
+					printf("No sulution");
+					return 0;
+				}
+				for (int j = 0; j < n; j++) {
+					temp = array[k][j];
+					array[k][j] = array[i][j];
+					array[i][j] = temp;
+				}
+				temp = b[k];
+				b[k] = b[i];
+				b[i] = temp;
+				k++;
 			}
+			div = array[i][i];
 		}
 		//행을 나누어 준다.
 		for (int j = 0; j < n; j++)

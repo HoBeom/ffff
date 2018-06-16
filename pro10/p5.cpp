@@ -33,7 +33,7 @@ int intersect(Line L, Line V) {
 	if (L.x1 <= V.x1&&L.x2 >= V.x1&&V.y1 <= L.y1&&V.y2 >= L.y1)
 		return 1;
 	return 0;
-}
+} 
 Line mkLine(Point p1, Point p2) {
 	Line L;
 	if (p1.y == p2.y) {

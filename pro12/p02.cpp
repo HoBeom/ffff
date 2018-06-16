@@ -7,10 +7,10 @@ int main() {
 	int len;
 	scanf("%s", word);
 	len = strlen(word);
-	//±â¼öÁ¤·Ä
+	//ê¸°ìˆ˜ì •ë ¬
 	for (int i = 0; i < len; i++) 
 		sort[word[i] - 'a']++;	
-	//Ãâ·Â
+	//
 	for (int i = 0; i < 27; i++)
 		for (int j = 0; j < sort[i]; j++)
 			printf("%c", i + 'a');

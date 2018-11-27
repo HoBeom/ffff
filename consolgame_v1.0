@@ -160,13 +160,8 @@ int main()
 		}
 		printf("\n비밀번호 : ");
 		getpassword(log_in_password);
-		/*
-		for (int i = 0; i < memcnt; i++) {
-			if (!(strcmp(info[i].id, log_in_id)) && !(strcmp(info[i].password, log_in_password)))
-				found =i;
-		}*/ //아이디랑 비밀번호 동시에 검사하면 오래걸림 아이디먼저 찾고 찾은아이디에서 비밀번호를 비교해야됨 단 아이디가 같은경우가 없다고 가정함
 		printf("\n\n");
-		if (strcmp(info[found].password, log_in_password)) {
+		if (strcmp(info[found].password, log_in_password)==0) {
 			printf("성공적으로 로그인 되었습니다\n");
 			Sleep(1000);
 			system("cls");
@@ -183,7 +178,7 @@ int main()
 	//아이디를 찾는 함수
 	int findID(char *id) {
 		for (int i = 0; i < memcnt; i++) {
-			if (strcmp(info[i].id, id))
+			if (strcmp(info[i].id, id)==0)
 				return i; //아이디를 찾아서 인덱스를 리턴
 		}
 		return MAXMEMBER; //아이디를 못찾은경우

@@ -1,3 +1,5 @@
+//부경대학교 융합디스플레이 공학과 학생들의 C프로그래밍 프로젝트입니다.
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -27,8 +29,6 @@ int main_screen()
 	int login = MAXMEMBER; // 현재 로그인된 사용자 정보초기화
 	while (1)
 	{
-		//struct member info[100]; //100명 가입 할수있게함 이걸 와일문안에 넣으면 계속 초기화됨 밖으로 빼야함 -> 전역변수로 바꿈
-		
 		if (login == MAXMEMBER) { //로그인이 안된상태
 			int i;
 			printf("1. 회원가입\n");
@@ -58,12 +58,12 @@ int main_screen()
 				printf("다시 입력해 주십시오.");
 				Sleep(1000); //딜레이
 				system("cls");
-				//main_screen(); //여기서 메인스크린을 안불러도 반복됨
+				
 			}
 		}
-		else { //로그인이 된상태 login 변수에 로그인된 사용자정보가 저장되어있음
+		else { 
 			printf("%s님 반갑습니다.\n",info[login].name);
-			//여기서 로그인 이후에 인터페이스를 만들면됨
+			
 
 		}
 	}
@@ -94,7 +94,7 @@ int main()
 
 			printf("아이디를 입력하시오 : ");
 			scanf("%s", info[memcnt].id);
-			//+추가  중복된 아이디 입니다.
+			
 			if (findID(info[memcnt].id) != MAXMEMBER) {
 				printf("중복된 아이디 입니다.\n");
 				Sleep(1000);
@@ -112,17 +112,15 @@ int main()
 				char password2[20];
 				scanf("%s", password2);
 				printf("\n");
-				if (!strcmp(info[memcnt].password, password2)) {                   //비밀번호 확인을 위해 패스워드를 두개저장하는건 비효율 적임
+				if (!strcmp(info[memcnt].password, password2)) {                   
 					printf("비밀번호가 일치합니다\n");
 					Sleep(1000); //딜레이
-					memcnt++; // 이 사람수를 기준으로 회원가입을 만들어야됨 이걸 증가시키면 다음회원가입하는 사람은 0 , 1 , 2 이런식으로 저장됨
+					memcnt++;
 					printf("%d", memcnt);
 					printf("\n회원가입이 완료 되었습니다.");
 					Sleep(1000);
 					system("cls");
-					return; //여기서 리턴하면 한명회원가입되고 종료되는거임
-					//main_screen(); //메인스크린 호출 을 이런식으로 하면 함수가 계속 쌓여서 폭팔해버림 여기선 리턴으로 함수를 종료시켜주는게 좋음
-					//break; // 이 브레이크 문이 호출이 될수가 없게되는거임
+					return; 
 				}
 				else
 					printf("비밀번호가 일치하지 않습니다\n");
@@ -133,10 +131,7 @@ int main()
 			printf("회원가입 인원수를 초과하였습니다."); //100명제한 초과경우 회원가입을 거부함
 			Sleep(1000);
 			system("cls");
-			return;
-			// 여기서도 마찬가지로 그냥 리턴 -> 함수를 종료시킴
-			//main_screen();
-			//break;
+			return;			
 		}
 	
 	}
@@ -172,14 +167,13 @@ int main()
 		printf("\n메인화면으로 돌아갑니다");
 		Sleep(1000);
 		system("cls");
-		//main_screen(); //여기서 호출하면 안됨 그냥 리턴
 		return MAXMEMBER;
 	}
 	//아이디를 찾는 함수
 	int findID(char *id) {
 		for (int i = 0; i < memcnt; i++) {
 			if (strcmp(info[i].id, id)==0)
-				return i; //아이디를 찾아서 인덱스를 리턴
+				return i;
 		}
 		return MAXMEMBER; //아이디를 못찾은경우
 	}

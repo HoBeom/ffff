@@ -1,0 +1,213 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <windows.h>
+#include <conio.h>
+#pragma warning(disable:4996)
+struct member //회원가입 정보
+{
+	char name[10];
+	char sex[10];
+	char age[10];
+	char id[20];
+	char password[20];
+};
+
+int main_screen(); //메인 인터페이스
+void join_member(); //회원가입 (회원정보)
+int log_in(); //로그인
+int findID(char *id); //아이디->인덱스
+void getpassword(char *buf);
+#define MAXMEMBER 100  //최대 100명
+int memcnt = 0; //사람수 
+struct member info[MAXMEMBER]; //회원정보 저장 배열 생성
+
+int main_screen()
+{
+	int login = MAXMEMBER; // 현재 로그인된 사용자 정보초기화
+	while (1)
+	{
+		//struct member info[100]; //100명 가입 할수있게함 이걸 와일문안에 넣으면 계속 초기화됨 밖으로 빼야함 -> 전역변수로 바꿈
+		
+		if (login == MAXMEMBER) { //로그인이 안된상태
+			int i;
+			printf("1. 회원가입\n");
+			printf("2. 로그인\n");
+			printf("3. 랭킹확인\n");
+			printf("4. 종료\n");
+			printf("번호를 입력하시오 : ");
+			scanf("%d", &i);
+			printf("\n");
+			switch (i)
+			{
+			case 1:
+				join_member();//회원가입으로이동
+				break;
+
+			case 2:
+				login = log_in(); //로그인으로 이동
+				break;
+			case 3:
+				break;
+
+			case 4:
+				printf("프로그램이 종료됩니다 ");
+				break;
+
+			default:
+				printf("다시 입력해 주십시오.");
+				Sleep(1000); //딜레이
+				system("cls");
+				//main_screen(); //여기서 메인스크린을 안불러도 반복됨
+			}
+		}
+		else { //로그인이 된상태 login 변수에 로그인된 사용자정보가 저장되어있음
+			printf("%s님 반갑습니다.\n",info[login].name);
+			//여기서 로그인 이후에 인터페이스를 만들면됨
+
+		}
+	}
+}
+
+int main()
+{
+	system("mode con: cols=100 lines=40"); //#include <stdlib.h> 화면크기조정
+	system("cls");
+	main_screen();//메인스크린 호출
+}
+
+	void join_member()//회원가입  //전역변수 info를 사용함
+	{
+		//회원가입인원수가 100명 이하일때
+		if (memcnt < MAXMEMBER) {
+			printf("이름을 입력하시오 : ");
+			scanf("%s", info[memcnt].name); //-> i대신 memcnt
+			printf("\n");
+
+			printf("성별을 입력하시오(남성/여성) : ");
+			scanf("%s", info[memcnt].sex);
+			printf("\n");
+
+			printf("나이를 입력하시오 : ");
+			scanf("%d", info[memcnt].age);
+			printf("\n");
+
+			printf("아이디를 입력하시오 : ");
+			scanf("%s", info[memcnt].id);
+			//+추가  중복된 아이디 입니다.
+			if (findID(info[memcnt].id) != MAXMEMBER) {
+				printf("중복된 아이디 입니다.\n");
+				Sleep(1000);
+				system("cls");
+				return ;
+			}
+
+			printf("\n");
+			while (1) {
+				printf("비밀번호를 입력하시오 : ");
+				scanf("%s", info[memcnt].password);
+				printf("\n");
+				printf("비밀번호 확인을 위해 다시 입력해 주십시오 : ");
+				//비밀번호 확인을 위한 변수 password2
+				char password2[20];
+				scanf("%s", password2);
+				printf("\n");
+				if (!strcmp(info[memcnt].password, password2)) {                   //비밀번호 확인을 위해 패스워드를 두개저장하는건 비효율 적임
+					printf("비밀번호가 일치합니다\n");
+					Sleep(1000); //딜레이
+					memcnt++; // 이 사람수를 기준으로 회원가입을 만들어야됨 이걸 증가시키면 다음회원가입하는 사람은 0 , 1 , 2 이런식으로 저장됨
+					printf("%d", memcnt);
+					printf("\n회원가입이 완료 되었습니다.");
+					Sleep(1000);
+					system("cls");
+					return; //여기서 리턴하면 한명회원가입되고 종료되는거임
+					//main_screen(); //메인스크린 호출 을 이런식으로 하면 함수가 계속 쌓여서 폭팔해버림 여기선 리턴으로 함수를 종료시켜주는게 좋음
+					//break; // 이 브레이크 문이 호출이 될수가 없게되는거임
+				}
+				else
+					printf("비밀번호가 일치하지 않습니다\n");
+			}
+		}
+		else
+		{
+			printf("회원가입 인원수를 초과하였습니다."); //100명제한 초과경우 회원가입을 거부함
+			Sleep(1000);
+			system("cls");
+			return;
+			// 여기서도 마찬가지로 그냥 리턴 -> 함수를 종료시킴
+			//main_screen();
+			//break;
+		}
+	
+	}
+
+	int log_in()
+	{
+		char log_in_id[20];
+		char log_in_password[20];
+		
+		printf("\n아이디 : ");
+		scanf("%s", log_in_id);
+		
+		int found = findID(log_in_id); //아이디를 찾음
+		if (found == MAXMEMBER) {
+			//아이디를 못찾은경우
+			printf("아이디가 일치하지 않습니다\n");
+			printf("\n메인화면으로 돌아갑니다");
+			Sleep(1000);
+			system("cls");
+			return MAXMEMBER;
+		}
+		printf("\n비밀번호 : ");
+		getpassword(log_in_password);
+		/*
+		for (int i = 0; i < memcnt; i++) {
+			if (!(strcmp(info[i].id, log_in_id)) && !(strcmp(info[i].password, log_in_password)))
+				found =i;
+		}*/ //아이디랑 비밀번호 동시에 검사하면 오래걸림 아이디먼저 찾고 찾은아이디에서 비밀번호를 비교해야됨 단 아이디가 같은경우가 없다고 가정함
+		printf("\n\n");
+		if (strcmp(info[found].password, log_in_password)) {
+			printf("성공적으로 로그인 되었습니다\n");
+			Sleep(1000);
+			system("cls");
+			//로그인성공
+			return found;
+		}			
+		printf("비밀번호가 일치하지 않습니다\n");
+		printf("\n메인화면으로 돌아갑니다");
+		Sleep(1000);
+		system("cls");
+		//main_screen(); //여기서 호출하면 안됨 그냥 리턴
+		return MAXMEMBER;
+	}
+	//아이디를 찾는 함수
+	int findID(char *id) {
+		for (int i = 0; i < memcnt; i++) {
+			if (strcmp(info[i].id, id))
+				return i; //아이디를 찾아서 인덱스를 리턴
+		}
+		return MAXMEMBER; //아이디를 못찾은경우
+	}
+
+	void getpassword(char *buf)
+	{
+		int i = 0;
+		char ch;
+
+		fflush(stdin);
+		while (1) {
+			ch = getch(); getch(); //내컴퓨터가 타이핑한번에 2바이트씩 받아서 2개해놈
+			if (ch == '\r') {
+				buf[i] = '\0';
+				break;
+			}
+			else if (ch == '\b') {
+				printf("%s", "\b \b");   // 백스페이스인 경우 한글자 지우기 
+				buf[--i] = '\0';
+				continue;
+			}
+
+			buf[i++] = ch;
+			putchar('*');
+		}
+	}

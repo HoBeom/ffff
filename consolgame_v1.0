@@ -156,7 +156,7 @@ int main()
 		printf("\n비밀번호 : ");
 		getpassword(log_in_password);
 		printf("\n\n");
-		if (strcmp(info[found].password, log_in_password)==0) {
+		if (strcmp(info[found].password, log_in_password)!=0) {
 			printf("성공적으로 로그인 되었습니다\n");
 			Sleep(1000);
 			system("cls");

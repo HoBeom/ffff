@@ -2,10 +2,17 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <windows.h>
-#include <conio.h>
-#pragma warning(disable:4996)
+#include <stdlib.h>//malloc, free 함수가 포함되있다.
+#include <windows.h>//커서위치
+#include <conio.h>//sleep함수 포함
+#include <time.h>//rand함수를 제대로 하기위함
+
+
+#define MAXMEMBER 100  //최대 100명
+#define MAXSCORE 300
+#define MAXLEVEL 4
+#define MAXWORD 100 
+
 struct member //회원가입 정보
 {
 	char name[10];
@@ -13,22 +20,213 @@ struct member //회원가입 정보
 	char age[10];
 	char id[20];
 	char password[20];
+	int level;
+	int score;
+};
+enum state
+{
+	unshow = 0,
+	show,
+	disable
+};
+struct word { //내려오는 단어 위치
+	int x, y;
+	state s;
 };
 
+struct member info[MAXMEMBER]; //회원정보 저장 배열 생성
+int memcnt = 0; //사람수 
+char words_out[MAXWORD][10];
+struct word loc[MAXWORD];
+int word_count = 0;
+
+void fileread(int); //파일 읽는함수
+void game_main(int);
+void gotoxy(int, int); // 이거 맞게하려면??
+void basic_design(); //게임화면 기본 디자인
 int main_screen(); //메인 인터페이스
 void join_member(); //회원가입 (회원정보)
 int log_in(); //로그인
 int findID(char *id); //아이디->인덱스
 void getpassword(char *buf);
-#define MAXMEMBER 100  //최대 100명
-int memcnt = 0; //사람수 
-struct member info[MAXMEMBER]; //회원정보 저장 배열 생성
+int lv(int);
+int speed(int);
 
+int speed(int level) {
+	switch (level)
+	{
+	case 1:
+		return 1000;
+	case 2:
+		return 900;
+	case 3:
+		return 800;
+	case 4:
+		return 700;
+	default:
+		return 1000;
+	}
+}
+int lv(int login) { // 레벨 함수
+	if (info[login].score > MAXSCORE) {
+		if (info[login].level < MAXLEVEL) {
+			info[login].score = 0;
+			info[login].level++;
+			return 1;
+		}
+	}
+	return 0;
+}
+void fileread(int level)
+{
+	char buf[10];
+	FILE *fp;
+	char filename[20] = "";
+	switch (level)
+	{
+	case 1: strcpy(filename, "lv1.txt");
+	case 2: strcpy(filename, "lv2.txt");
+	case 3: strcpy(filename, "lv3.txt");
+	case 4: strcpy(filename, "lv4.txt");
+
+	}
+	fp = fopen(filename, "r");
+	int index = 0;
+	if (fp != NULL)
+		while (fscanf(fp, "%s", words_out[index++]) != EOF);
+	printf("%d", index);
+	word_count = index;
+	for (int i = 0; i < index; i++)//각 단어마다 내려올 시간, 위치를 정해준다.
+	{
+		loc[i].x = rand() % 40 + 1;
+		loc[i].y = 1;
+		loc[i].s = unshow;
+	}
+}
+void gotoxy(int x, int y) //커서 보내는 함수
+{
+	COORD Pos = { x,y };
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+}
+void basic_design()
+{
+	for (int i = 0; i <= 22; i++) {
+		if (i == 0 || i == 22) {
+			printf("-------------------------------------------------\n");
+		}
+		else printf("|                                               |\n");
+	}
+}
+void start(int login)
+{
+	int i;
+	for (i = 0; i < 3; i++) // 시작준비
+	{
+		basic_design();
+		gotoxy(2, 28);
+		printf("레벨 : %d", info[login].level);
+		gotoxy(3, 28);
+		printf("점수 : %d", info[login].score);
+		gotoxy(7, 7);
+		printf("%d초 후에 시작합니다. 준비해 주세요!", 3 - i);
+		Sleep(1000);
+		system("cls");
+	}
+}
+void print(int index) {
+	gotoxy(loc[index].x, loc[index].y);
+	printf("%s", words_out[index]);
+}
+void printwords(int login) {
+	
+	for (int i = 0; i < word_count; i++) {
+		system("cls");
+		basic_design();
+		print(i);
+		loc[i].s = show;
+		for (int k = 0; k <= i; k++) {
+			loc[k].y++;//전에 있던 것들으 다 더해준다.
+			if (loc[k].y == 21) {
+				loc[k].y = 70;
+				info[login].score -= 3;
+			}
+
+		}
+		for (int l = 0; l < i; l++) { //do ~ while 이 어떨까?? 이때까지 나온거 나오게 하기
+			gotoxy(loc[l].x, loc[l].y);
+			printf("%s", words_out[l]);
+		}
+		gotoxy(2, 28);
+		printf("점수 : %d", info[login].score);
+		gotoxy(2, 33);
+		printf("LEVEL : %d", info[login].level);
+		gotoxy(5, 25);
+		printf("입력 : ");
+		Sleep(1000);
+	}
+	Sleep(speed(info[login].level));
+}
+void game_main(int login)
+{
+
+	//int i, j, score = 0, LEVEL = 3;
+	//char a;
+	//char words_used[10][3] = { "" };
+	//char input;
+	//char *c_p;
+	//char key; // 동적 메모리 할당
+			  //이거 한번 봐달라고 해야됨
+	//c_p = (char*)malloc(sizeof(int) * 10);
+	system("mode con: cols=50 lines=30"); //#include <stdlib.h> 화면크기조정
+	srand(time(NULL));
+	
+
+	while (true) {
+	printwords(login);
+	start(login);
+	fileread(info[login].level);
+
+	}
+
+	
+	/*
+	key = getchar();//버그 내려오는  도중에 입력이 되지 않는다
+
+	for (i = 0; i <= word_max; i++) { //맞는지 체크하는것
+		for (j = 0; j <= 10; j++) {
+			*c_p = words_out[i][j];
+			if (*c_p == key)//맞는 경우에는?
+			{
+				//words_out[i][1] = { " " };
+				score += 5;
+				gotoxy(2, 28);
+				printf("점수 : %d", score);
+				gotoxy(5, 40);
+				printf("CORRECT!!");
+				gotoxy(5, 28);
+
+			}
+			else {//틀린 경우에는?
+				score -= 3;
+				gotoxy(2, 28);
+				printf("점수 : %d", score);
+				gotoxy(5, 40);
+				printf("INCORRECT.. :(");
+				gotoxy(5, 28);
+
+			}
+		}
+	}
+	free(c_p);*/
+	//만약 input 이랑 해당 줄이 같으면 해당 단어를 빈칸으로 바꾸어 버린다.
+}
 int main_screen()
 {
 	int login = MAXMEMBER; // 현재 로그인된 사용자 정보초기화
 	while (1)
 	{
+		//struct member info[100]; //100가입할수있게함
+
 		if (login == MAXMEMBER) { //로그인이 안된상태
 			int i;
 			printf("1. 회원가입\n");
@@ -48,8 +246,8 @@ int main_screen()
 				login = log_in(); //로그인으로 이동
 				break;
 			case 3:
+				//Rank(login);
 				break;
-
 			case 4:
 				printf("프로그램이 종료됩니다 ");
 				break;
@@ -58,145 +256,174 @@ int main_screen()
 				printf("다시 입력해 주십시오.");
 				Sleep(1000); //딜레이
 				system("cls");
-				
 			}
 		}
-		else { 
-			printf("%s님 반갑습니다.\n",info[login].name);
-			
+		else { //로그인이 된상태 login 변수에 로그인된 사용자정보가 저장되어있음
+			printf("%s님 반갑습니다.\n", info[login].name);
+			printf("1. 게임시작\n");
+			printf("2. 회원정보확인\n");
+			printf("3. 랭킹확인\n");
+			printf("4. 로그아웃\n");
+			printf("번호를 입력하시오 : ");
+			int i;
+			scanf("%d", &i);
+			printf("\n");
+			switch (i)
+			{
+			case 1:
+				game_main(login);
+				break;
 
+			case 2:
+				//profile(login);
+				break;
+			case 3:
+				//Rank(login);
+				break;
+			case 4:
+				printf("로그아웃 중입니다...");
+				login = MAXMEMBER;
+				Sleep(1000);
+				system("cls");
+				break;			
+			default:
+				printf("다시 입력해 주십시오.");
+				Sleep(1000); //딜레이
+				system("cls");
+			}			
 		}
 	}
 }
 
 int main()
 {
-	system("mode con: cols=100 lines=40"); //#include <stdlib.h> 화면크기조정
+	system("mode con: cols=50 lines=35"); //#include <stdlib.h> 화면크기조정
 	system("cls");
 	main_screen();//메인스크린 호출
 }
 
-	void join_member()//회원가입  //전역변수 info를 사용함
-	{
-		//회원가입인원수가 100명 이하일때
-		if (memcnt < MAXMEMBER) {
-			printf("이름을 입력하시오 : ");
-			scanf("%s", info[memcnt].name); //-> i대신 memcnt
-			printf("\n");
+void join_member()//회원가입  //전역변수 info를 사용함
+{
+	//회원가입인원수가 100명 이하일때
+	if (memcnt < MAXMEMBER) {
+		printf("이름을 입력하시오 : ");
+		scanf("%s", info[memcnt].name); //-> i대신 memcnt
+		printf("\n");
 
-			printf("성별을 입력하시오(남성/여성) : ");
-			scanf("%s", info[memcnt].sex);
-			printf("\n");
+		printf("성별을 입력하시오(남성/여성) : ");
+		scanf("%s", info[memcnt].sex);
+		printf("\n");
 
-			printf("나이를 입력하시오 : ");
-			scanf("%d", info[memcnt].age);
-			printf("\n");
+		printf("나이를 입력하시오 : ");
+		scanf("%d", info[memcnt].age);
+		printf("\n");
 
-			printf("아이디를 입력하시오 : ");
-			scanf("%s", info[memcnt].id);
-			
-			if (findID(info[memcnt].id) != MAXMEMBER) {
-				printf("중복된 아이디 입니다.\n");
+		printf("아이디를 입력하시오 : ");
+		scanf("%s", info[memcnt].id);
+		//+추가  중복된 아이디 입니다.
+		printf("\n");
+		while (1) {
+			printf("비밀번호를 입력하시오 : ");
+			scanf("%s", info[memcnt].password);
+			printf("\n");
+			printf("비밀번호 확인을 위해 다시 입력해 주십시오 : ");
+			//비밀번호 확인을 위한 변수 password2
+			char password2[20];
+			scanf("%s", password2);
+			printf("\n");
+			if (!strcmp(info[memcnt].password, password2)) {
+				printf("비밀번호가 일치합니다\n");
+				Sleep(1000); //딜레이
+				memcnt++; // 이 사람수를 기준으로 회원가입을 만듬 이걸 증가시키면 다음회원가입하는 사람은 0 , 1 , 2 이런식으로 저장됨
+				printf("현재 회원수 %d", memcnt);
+				printf("\n회원가입이 완료 되었습니다.");
+				info[memcnt].level = 1; //레벨점수 초기화
+				info[memcnt].score = 0;
 				Sleep(1000);
 				system("cls");
-				return ;
+				return; //여기서 리턴하면 한명회원가입되고 종료되는거임
 			}
-
-			printf("\n");
-			while (1) {
-				printf("비밀번호를 입력하시오 : ");
-				scanf("%s", info[memcnt].password);
-				printf("\n");
-				printf("비밀번호 확인을 위해 다시 입력해 주십시오 : ");
-				//비밀번호 확인을 위한 변수 password2
-				char password2[20];
-				scanf("%s", password2);
-				printf("\n");
-				if (!strcmp(info[memcnt].password, password2)) {                   
-					printf("비밀번호가 일치합니다\n");
-					Sleep(1000); //딜레이
-					memcnt++;
-					printf("%d", memcnt);
-					printf("\n회원가입이 완료 되었습니다.");
-					Sleep(1000);
-					system("cls");
-					return; 
-				}
-				else
-					printf("비밀번호가 일치하지 않습니다\n");
-			}
+			else
+				printf("비밀번호가 일치하지 않습니다\n");
 		}
-		else
-		{
-			printf("회원가입 인원수를 초과하였습니다."); //100명제한 초과경우 회원가입을 거부함
-			Sleep(1000);
-			system("cls");
-			return;			
-		}
-	
+	}
+	else
+	{
+		printf("회원가입 인원수를 초과하였습니다."); //100명제한 초과경우 회원가입을 거부함
+		Sleep(1000);
+		system("cls");
+		return;
 	}
 
-	int log_in()
-	{
-		char log_in_id[20];
-		char log_in_password[20];
-		
-		printf("\n아이디 : ");
-		scanf("%s", log_in_id);
-		
-		int found = findID(log_in_id); //아이디를 찾음
-		if (found == MAXMEMBER) {
-			//아이디를 못찾은경우
-			printf("아이디가 일치하지 않습니다\n");
-			printf("\n메인화면으로 돌아갑니다");
-			Sleep(1000);
-			system("cls");
-			return MAXMEMBER;
-		}
-		printf("\n비밀번호 : ");
-		getpassword(log_in_password);
-		printf("\n\n");
-		if (!strcmp(info[found].password, log_in_password)) {
-			printf("성공적으로 로그인 되었습니다\n");
-			Sleep(1000);
-			system("cls");
-			//로그인성공
-			return found;
-		}			
-		printf("비밀번호가 일치하지 않습니다\n");
+}
+
+int log_in()
+{
+	char log_in_id[20];
+	char log_in_password[20];
+
+	printf("\n아이디 : ");
+	scanf("%s", log_in_id);
+
+	int found = findID(log_in_id); //아이디를 찾음
+	if (found == MAXMEMBER) {
+		//아이디를 못찾은경우
+		printf("아이디가 일치하지 않습니다\n");
 		printf("\n메인화면으로 돌아갑니다");
 		Sleep(1000);
 		system("cls");
 		return MAXMEMBER;
 	}
-	//아이디를 찾는 함수
-	int findID(char *id) {
-		for (int i = 0; i < memcnt; i++) {
-			if (strcmp(info[i].id, id)==0)
-				return i;
-		}
-		return MAXMEMBER; //아이디를 못찾은경우
+	printf("\n비밀번호 : ");
+	getpassword(log_in_password);
+	/*
+	for (int i = 0; i < memcnt; i++) {
+	if (!(strcmp(info[i].id, log_in_id)) && !(strcmp(info[i].password, log_in_password)))
+	found =i;
+	}*/ //단 아이디가 같은경우가 없다고 가정함
+	printf("\n\n%d", found);
+
+	if (!strcmp(info[found].password, log_in_password)) {
+		printf("성공적으로 로그인 되었습니다\n");
+		Sleep(1000);
+		system("cls");
+		//로그인성공
+		return found;
 	}
-
-	void getpassword(char *buf)
-	{
-		int i = 0;
-		char ch;
-
-		fflush(stdin);
-		while (1) {
-			ch = getch(); getch(); //내컴퓨터가 타이핑한번에 2바이트씩 받아서 2개해놈
-			if (ch == '\r') {
-				buf[i] = '\0';
-				break;
-			}
-			else if (ch == '\b') {
-				printf("%s", "\b \b");   // 백스페이스인 경우 한글자 지우기 
-				buf[--i] = '\0';
-				continue;
-			}
-
-			buf[i++] = ch;
-			putchar('*');
-		}
+	printf("비밀번호가 일치하지 않습니다\n");
+	printf("\n메인화면으로 돌아갑니다");
+	Sleep(1000);
+	system("cls");
+	return MAXMEMBER;
+}
+//아이디를 찾는 함수
+int findID(char *tagetid) {
+	for (int i = 0; i < memcnt; i++) {
+		if (!strcmp(info[i].id, tagetid))
+			return i; //아이디를 찾아서 인덱스를 리턴
 	}
+	return MAXMEMBER; //아이디를 못찾은경우
+}
+
+void getpassword(char *buf)
+{
+	int i = 0;
+	char ch;
+
+	fflush(stdin);
+	while (1) {
+		ch = getch(); getch(); //내컴퓨터가 타이핑한번에 2바이트씩 받아서 2개해놈
+		if (ch == '\r') {
+			buf[i] = '\0';
+			break;
+		}
+		else if (ch == '\b') {
+			printf("%s", "\b \b");   // 백스페이스인 경우 한글자 지우기 
+			buf[--i] = '\0';
+			continue;
+		}
+
+		buf[i++] = ch;
+		putchar('*');
+	}
+}

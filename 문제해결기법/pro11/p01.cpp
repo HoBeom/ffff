@@ -1,4 +1,5 @@
 /*
+포커 프로그램 
 Suit: club,diamond,heart,spade
 Rank: ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, jcak, queen, king
 ace 는 1혹은 14로 사용된다.

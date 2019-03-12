@@ -1,6 +1,8 @@
 #include <stdio.h>
 #define MAX 100
 int check(double array[MAX][MAX], double b[MAX], int n);
+
+// 2번 [Gaussian Elimination] 1차 연립방정식을 푸는 가우스 소거법(Gaussian elimination)을 수행하는 프로그램을 작성하라.
 int main() {
 	double array[MAX][MAX];
 	double b[MAX];

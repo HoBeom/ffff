@@ -1,9 +1,0 @@
-diff a/alg03.java b/alg03.java	(rejected hunks)
-@@ -9,7 +9,6 @@
- 
- 	public static void main(String[] args) {
- 		new alg03();
--		new NoBreak();
- 	}
- 
- 	alg03() {

@@ -1,3 +1,5 @@
+//단어찾기 프로그램
+
 #include <stdio.h>
 #include <string.h>
 #define MAX_WORD 4000

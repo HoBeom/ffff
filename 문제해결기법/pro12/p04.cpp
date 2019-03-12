@@ -2,6 +2,9 @@
 #include <string.h>
 #pragma warning(disable:4473)
 
+//입력으로 텍스트파일 input.txt를 읽어서 왼쪽 정렬하여 output.txt 파일로 출력하는 프로그램을 작성하라. 
+//출력 파일의 한 줄은 80 문자를 초과해서는 안되며, 단어를 자르지 않는 한도 내에서 가능한 한
+//최대한 80 문자에 가깝도록 맞춘다.
 int main() {
 	char ch;
 	int count = 0;

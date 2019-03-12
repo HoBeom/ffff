@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #pragma warning(disable:4996)
+
+//아나그램(anagram)이란 문자들의 순서를 재배열하여 동일하게 만들 수 있는 문자열을 말한다. 대소문자는 구분하지 않는다. 
+//예를 들어서 Silent와 Listen은 아나그램이다. 입력으로 두 문자열을 받아서 아나그램인지 판단하는 프로그램을 작성하라.
 char tolower(char a) {
 	if (a < 'a')
 		return a + 32;

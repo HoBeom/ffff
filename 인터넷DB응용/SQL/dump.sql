@@ -1,0 +1,263 @@
+drop sequence POST_SEQ;
+drop sequence VIEWS_SEQ;
+
+DROP TABLE USR 
+	CASCADE CONSTRAINTS;
+
+/* 전단지 */
+DROP TABLE POST 
+	CASCADE CONSTRAINTS;
+
+/* 조회 */
+DROP TABLE VIEWS 
+	CASCADE CONSTRAINTS;
+
+/* 사업자회원 */
+DROP TABLE BUSI 
+	CASCADE CONSTRAINTS;
+
+
+/* 포인트 사용 */
+DROP TABLE HIST 
+	CASCADE CONSTRAINTS;
+
+/* 로그인 */
+DROP TABLE LOGIN 
+	CASCADE CONSTRAINTS;
+
+/* 사용자회원 */
+CREATE TABLE USR (
+	U_no INTEGER NOT NULL, /* 사용자번호 */
+	U_na NVARCHAR2(20) NOT NULL, /* 이름 */
+	Tele NVARCHAR2(20) NOT NULL, /* 전화번호 */
+	U_po INTEGER NOT NULL /* 포인트 */
+);
+
+COMMENT ON TABLE USR IS '사용자회원';
+
+COMMENT ON COLUMN USR.U_no IS '사용자번호';
+
+COMMENT ON COLUMN USR.U_na IS '이름';
+
+COMMENT ON COLUMN USR.Tele IS '전화번호';
+
+COMMENT ON COLUMN USR.U_po IS '포인트';
+
+CREATE UNIQUE INDEX PK_USR
+	ON USR (
+		U_no ASC
+	);
+
+ALTER TABLE USR
+	ADD
+		CONSTRAINT PK_USR
+		PRIMARY KEY (
+			U_no
+		);
+
+/* 전단지 */
+CREATE TABLE POST (
+	P_no INTEGER NOT NULL, /* 전단번호 */
+	P_vi INTEGER NOT NULL, /* 조회수 */
+	B_no INTEGER NOT NULL, /* 사업자등록번호 */
+	P_po INTEGER NOT NULL, /* 포인트총액 */
+	image BLOB NOT NULL, /* 이미지 */
+	P_vp INTEGER NOT NULL, /* 조회포인트 */
+	P_ca NVARCHAR2(20) /* 분류명 */
+);
+
+COMMENT ON TABLE POST IS '전단지';
+
+COMMENT ON COLUMN POST.P_no IS '전단번호';
+
+COMMENT ON COLUMN POST.P_vi IS '조회수';
+
+COMMENT ON COLUMN POST.B_no IS '사업자등록번호';
+
+COMMENT ON COLUMN POST.P_po IS '포인트총액';
+
+COMMENT ON COLUMN POST.image IS '이미지';
+
+COMMENT ON COLUMN POST.P_vp IS '조회포인트';
+
+COMMENT ON COLUMN POST.P_ca IS '분류명';
+
+CREATE UNIQUE INDEX PK_POST
+	ON POST (
+		P_no ASC
+	);
+
+ALTER TABLE POST
+	ADD
+		CONSTRAINT PK_POST
+		PRIMARY KEY (
+			P_no
+		);
+
+/* 조회 */
+CREATE TABLE VIEWS (
+	V_po INTEGER NOT NULL, /* 포인트적립 */
+	V_date DATE, /* 조회일시 */
+	P_no INTEGER, /* 전단번호 */
+	U_no INTEGER /* 사용자번호 */
+);
+
+COMMENT ON TABLE VIEWS IS '조회';
+
+COMMENT ON COLUMN VIEWS.V_po IS '포인트적립';
+
+COMMENT ON COLUMN VIEWS.V_date IS '조회일시';
+
+COMMENT ON COLUMN VIEWS.P_no IS '전단번호';
+
+COMMENT ON COLUMN VIEWS.U_no IS '사용자번호';
+
+/* 사업자회원 */
+CREATE TABLE BUSI (
+	B_no INTEGER NOT NULL, /* 사업자등록번호 */
+	B_na NVARCHAR2(50) NOT NULL, /* 상호명 */
+	Tele NVARCHAR2(20) NOT NULL /* 전화번호 */
+);
+
+COMMENT ON TABLE BUSI IS '사업자회원';
+
+COMMENT ON COLUMN BUSI.B_no IS '사업자등록번호';
+
+COMMENT ON COLUMN BUSI.B_na IS '상호명';
+
+COMMENT ON COLUMN BUSI.Tele IS '전화번호';
+
+CREATE UNIQUE INDEX PK_BUSI
+	ON BUSI (
+		B_no ASC
+	);
+
+ALTER TABLE BUSI
+	ADD
+		CONSTRAINT PK_BUSI
+		PRIMARY KEY (
+			B_no
+		);
+
+
+/* 포인트 사용 */
+CREATE TABLE HIST (
+	U_no INTEGER, /* 사용자번호 */
+	H_da DATE, /* 사용일시 */
+	H_po INTEGER /* 사용금액 */
+);
+
+COMMENT ON TABLE HIST IS '포인트 사용';
+
+COMMENT ON COLUMN HIST.U_no IS '사용자번호';
+
+COMMENT ON COLUMN HIST.H_da IS '사용일시';
+
+COMMENT ON COLUMN HIST.H_po IS '사용금액';
+
+/* 로그인 */
+CREATE TABLE LOGIN (
+	PASS NVARCHAR2(20) NOT NULL, /* 비밀번호 */
+	ID NVARCHAR2(20) NOT NULL, /* 아이디 */
+	TYPE CHAR(1) NOT NULL, /* 타입 */
+	U_no INTEGER, /* 사용자번호 */
+	B_no INTEGER /* 사업자등록번호 */
+);
+
+COMMENT ON TABLE LOGIN IS '로그인';
+
+COMMENT ON COLUMN LOGIN.PASS IS '비밀번호';
+
+COMMENT ON COLUMN LOGIN.ID IS '아이디';
+
+COMMENT ON COLUMN LOGIN.TYPE IS '타입';
+
+COMMENT ON COLUMN LOGIN.U_no IS '사용자번호';
+
+COMMENT ON COLUMN LOGIN.B_no IS '사업자등록번호';
+
+CREATE UNIQUE INDEX PK_LOGIN
+	ON LOGIN (
+		ID ASC
+	);
+
+ALTER TABLE LOGIN
+	ADD
+		CONSTRAINT PK_LOGIN
+		PRIMARY KEY (
+			ID
+		);
+
+ALTER TABLE POST
+	ADD
+		CONSTRAINT FK_BUSI_TO_POST
+		FOREIGN KEY (
+			B_no
+		)
+		REFERENCES BUSI (
+			B_no
+		);
+
+ALTER TABLE VIEWS
+	ADD
+		CONSTRAINT FK_POST_TO_VIEWS
+		FOREIGN KEY (
+			P_no
+		)
+		REFERENCES POST (
+			P_no
+		);
+
+ALTER TABLE VIEWS
+	ADD
+		CONSTRAINT FK_USR_TO_VIEWS
+		FOREIGN KEY (
+			U_no
+		)
+		REFERENCES USR (
+			U_no
+		);
+
+
+
+ALTER TABLE HIST
+	ADD
+		CONSTRAINT FK_USR_TO_HIST
+		FOREIGN KEY (
+			U_no
+		)
+		REFERENCES USR (
+			U_no
+		);
+
+ALTER TABLE LOGIN
+	ADD
+		CONSTRAINT FK_USR_TO_LOGIN
+		FOREIGN KEY (
+			U_no
+		)
+		REFERENCES USR (
+			U_no
+		);
+
+ALTER TABLE LOGIN
+	ADD
+		CONSTRAINT FK_BUSI_TO_LOGIN
+		FOREIGN KEY (
+			B_no
+		)
+		REFERENCES BUSI (
+			B_no
+		);
+
+ CREATE SEQUENCE POST_SEQ
+        START WITH 1
+        INCREMENT BY 1
+        CACHE 60;
+
+ CREATE SEQUENCE VIEWS_SEQ
+        START WITH 1
+        INCREMENT BY 1
+        CACHE 60;
+
+commit;

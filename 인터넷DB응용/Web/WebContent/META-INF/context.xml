@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+<Resource name="jdbc/xe"
+auth="Container"
+type="javax.sql.DataSource"
+username="db201630273"
+password="201630273"
+driverClassName="oracle.jdbc.OracleDriver"
+url="jdbc:oracle:thin:@db.pknu.ac.kr:1521:xe"
+maxActive="2"
+maxIdle="1"
+maxWait="3000"
+removeAbandoned="true"
+removeAbandonedTimeout="3"
+/>
+
+</Context>
